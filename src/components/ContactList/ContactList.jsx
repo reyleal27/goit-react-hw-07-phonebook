@@ -6,7 +6,7 @@ export class ContactList extends Component {
 
   render() {
     const { filterContact, deleteContact } = this.props;
-    const filteredContacts = filterContact();
+    const filteredContacts = filterContact;
 
     return (
       <ul className='contact-list'>
@@ -23,6 +23,5 @@ export class ContactList extends Component {
 };
 
 ContactList.propTypes = {
-    filterContact: PropTypes.func.isRequired,
     deleteContact: PropTypes.func.isRequired,
 }

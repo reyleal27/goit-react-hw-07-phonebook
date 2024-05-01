@@ -2,8 +2,7 @@ import ContactForm from './ContactForm/ContactForm';
 import { ContactList } from './ContactList/ContactList';
 import Filter from './FilterContact/FilterContact';
 import { useDispatch, useSelector } from 'react-redux';
-import { getFilter, getContacts } from '../redux/selector';
-// import { addContact, deleteContact } from '../redux/contactSlice';
+import { selectFilter, selectIsLoading, selectError, selectVisibleContacts} from '../redux/selector';
 import { setFilter } from '../redux/filterSlice';
 import { fetchContacts, addContact, deleteContact } from '../redux/operation';
 import { useEffect } from 'react';
@@ -11,9 +10,10 @@ import { useEffect } from 'react';
 
 const App = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
-
-  const filter = useSelector(getFilter);
+  const error = useSelector(selectError);
+  const isLoading = useSelector(selectIsLoading);
+  const filter = useSelector(selectFilter);
+  const visibleContacts = useSelector(selectVisibleContacts);
 
   useEffect(() => {
     dispatch(fetchContacts());
@@ -35,23 +35,20 @@ const App = () => {
   };
 
 
-  const filterContact = () => {
-    const filterLowerCase = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filterLowerCase)
-    );
-  };
+  
 
   return (
     <div className="phonebook-wrapper">
       <h1>Phonebook</h1>
-      <ContactForm addContact={handleAddContact} contacts={contacts} />
+      <ContactForm addContact={handleAddContact} contacts={visibleContacts} />
 
       <h2>Contacts</h2>
       <Filter filter={filter} setFilter={handleSetFilter} />
-      {contacts.length > 0 ? (
+      {isLoading && (<h2>Loading...</h2>)}
+      {error && (<h3>Error:{ error }</h3>)}
+      {visibleContacts.length > 0 ? (
         <ContactList
-          filterContact={filterContact}
+          filterContact={visibleContacts}
           deleteContact={handleDeleteContact}
         />
       ) : (
